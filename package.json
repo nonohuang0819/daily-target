@@ -1,0 +1,16 @@
+{
+  "name": "daily-target",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace @daily-target/api\" \"npm run dev --workspace @daily-target/web\"",
+    "build": "npm run build --workspace @daily-target/web",
+    "start": "concurrently \"npm run start --workspace @daily-target/api\" \"npm run start --workspace @daily-target/web\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
