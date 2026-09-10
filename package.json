@@ -8,7 +8,13 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace @daily-target/api\" \"npm run dev --workspace @daily-target/web\"",
     "build": "npm run build --workspace @daily-target/web",
-    "start": "concurrently \"npm run start --workspace @daily-target/api\" \"npm run start --workspace @daily-target/web\""
+    "start": "concurrently \"npm run start --workspace @daily-target/api\" \"npm run start --workspace @daily-target/web\"",
+    "dev:api": "npm run dev --workspace @daily-target/api",
+    "dev:web": "npm run dev --workspace @daily-target/web",
+    "db:up": "docker compose up -d --wait mysql",
+    "db:down": "docker compose stop mysql",
+    "db:import": "npm run db:import --workspace @daily-target/api",
+    "test:api": "npm test --workspace @daily-target/api"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

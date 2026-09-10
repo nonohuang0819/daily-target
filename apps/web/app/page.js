@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+import { issuesApi } from "../lib/api";
 
 const columns = [
   { key: "todo", label: "待辦事項", hint: "準備開始的任務" },
@@ -40,13 +40,7 @@ export default function HomePage() {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/issues`, { cache: "no-store" });
-
-      if (!response.ok) {
-        throw new Error("無法讀取任務列表");
-      }
-
-      const data = await response.json();
+      const data = await issuesApi.list();
       setIssues(data);
     } catch (loadError) {
       setError(loadError.message);
@@ -60,19 +54,7 @@ export default function HomePage() {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/issues`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form)
-      });
-
-      if (!response.ok) {
-        throw new Error("建立任務失敗");
-      }
-
-      const issue = await response.json();
+      const issue = await issuesApi.create(form);
       setIssues((current) => [issue, ...current]);
       setForm(emptyIssue);
     } catch (createError) {
@@ -106,19 +88,7 @@ export default function HomePage() {
 
     startTransition(async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/issues/${draggingId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ status: nextStatus })
-        });
-
-        if (!response.ok) {
-          throw new Error("更新任務狀態失敗");
-        }
-
-        const updatedIssue = await response.json();
+        const updatedIssue = await issuesApi.update(draggingId, { status: nextStatus });
         setIssues((current) =>
           current.map((issue) => (issue.id === updatedIssue.id ? updatedIssue : issue))
         );
@@ -136,7 +106,7 @@ export default function HomePage() {
           <p className="eyebrow">Daily Target</p>
           <h1>像 JIRA 一樣管理你每天要推進的事情</h1>
           <p className="hero-copy">
-            把想做的事丟進待辦，開始處理就拖到進行中，做完再丟到完成。前端與後端分離，之後要接資料庫或登入也很自然。
+            把想做的事丟進待辦，開始處理就拖到進行中，做完再丟到完成。讓每一天的進度一目了然。
           </p>
         </div>
         <button className="ghost-button" onClick={loadIssues} disabled={loading || isPending}>
